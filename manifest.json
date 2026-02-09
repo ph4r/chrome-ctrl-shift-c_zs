@@ -1,0 +1,49 @@
+{
+  "manifest_version": 3,
+  "name": "Ctrl+Shift+C — Copy URL",
+  "version": "1.0.0",
+  "description": "Instantly copy the current tab's URL to your clipboard with Ctrl+Shift+C. Customizable shortcut. Simple, fast, reliable.",
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    },
+    "default_title": "Ctrl+Shift+C — Copy URL"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_start"
+    }
+  ],
+  "commands": {
+    "copy-url": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+C",
+        "mac": "Command+Shift+C"
+      },
+      "description": "Copy current tab URL to clipboard"
+    }
+  },
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage",
+    "offscreen",
+    "clipboardWrite"
+  ],
+  "minimum_chrome_version": "109"
+}

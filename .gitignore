@@ -1,0 +1,20 @@
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Store metadata (for Chrome Web Store dashboard only)
+store/
+
+# Chrome extension packaging
+*.crx
+*.pem
+*.zip
+
+# Node (if build tools added later)
+node_modules/

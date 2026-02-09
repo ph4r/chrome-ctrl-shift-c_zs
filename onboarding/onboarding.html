@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Set Up Copy URL</title>
+  <link rel="stylesheet" href="onboarding.css">
+</head>
+<body>
+  <div class="onboarding">
+
+    <div class="onboarding__progress">
+      <div class="onboarding__dot onboarding__dot--active" data-step="1"></div>
+      <div class="onboarding__dot" data-step="2"></div>
+      <div class="onboarding__dot" data-step="3"></div>
+    </div>
+
+    <!-- Step 1: Welcome -->
+    <section class="onboarding__step onboarding__step--active" id="step-welcome">
+      <div class="onboarding__icon-wrapper">
+        <img src="../icons/icon128.png" alt="" class="onboarding__logo" width="80" height="80">
+      </div>
+      <h1 class="onboarding__heading">Welcome to Copy URL</h1>
+      <p class="onboarding__subheading">
+        Copy any page's URL to your clipboard instantly with a keyboard shortcut.
+        Let's set up your preferred shortcut.
+      </p>
+      <button class="onboarding__btn onboarding__btn--primary" id="btn-get-started">
+        Get Started
+      </button>
+    </section>
+
+    <!-- Step 2: Choose Shortcut -->
+    <section class="onboarding__step" id="step-shortcut">
+      <h1 class="onboarding__heading">Choose Your Shortcut</h1>
+      <p class="onboarding__subheading">
+        Press any key combination with at least one modifier
+        (Ctrl, Shift, Alt, or Cmd).
+      </p>
+      <div class="onboarding__recorder">
+        <div class="onboarding__recorder-display" id="recorder-display">
+          Press a key combo&hellip;
+        </div>
+      </div>
+      <p class="onboarding__hint" id="recorder-hint">
+        Example: Ctrl+Shift+C
+      </p>
+      <button class="onboarding__btn onboarding__btn--primary" id="btn-confirm-shortcut" disabled>
+        Use This Shortcut
+      </button>
+      <button class="onboarding__btn onboarding__btn--ghost" id="btn-use-default">
+        Use default (Ctrl+Shift+C)
+      </button>
+    </section>
+
+    <!-- Step 3: Success -->
+    <section class="onboarding__step" id="step-done">
+      <div class="onboarding__icon-wrapper">
+        <div class="onboarding__checkmark"></div>
+      </div>
+      <h1 class="onboarding__heading">You're All Set!</h1>
+      <p class="onboarding__subheading">
+        Press <strong id="final-shortcut-label">Ctrl+Shift+C</strong>
+        on any page to copy its URL.
+      </p>
+      <button class="onboarding__btn onboarding__btn--primary" id="btn-start-using">
+        Start Using Copy URL
+      </button>
+    </section>
+
+  </div>
+
+  <script src="../shared/shortcut-utils.js"></script>
+  <script src="onboarding.js"></script>
+</body>
+</html>
