@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Ctrl+Shift+C — Copy URL",
-  "version": "1.0.0",
-  "description": "Instantly copy the current tab's URL to your clipboard with Ctrl+Shift+C. Customizable shortcut. Simple, fast, reliable.",
+  "name": "Copy URL — One-Click URL Copier & Link Shortcut (Ctrl+Shift+C)",
+  "version": "1.1.1",
+  "description": "One-click URL copier — copy any URL to clipboard with a keyboard shortcut. The fastest way to copy links in Chrome. Free & simple.",
   "icons": {
     "16": "icons/icon16.png",
     "32": "icons/icon32.png",
