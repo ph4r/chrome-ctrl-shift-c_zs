@@ -204,10 +204,23 @@ function showPreviewToast() {
   }, 1500);
 }
 
-function completeOnboarding() {
-  chrome.storage.local.set({ onboarded: true }, () => {
+async function completeOnboarding() {
+  await chrome.storage.local.set({ onboarded: true });
+
+  try {
+    const current = await chrome.windows.getCurrent();
+    const windows = await chrome.windows.getAll();
+    // Close other windows first so this page keeps executing;
+    // the last remove() takes us down with it.
+    await Promise.all(
+      windows
+        .filter((w) => w.id !== current.id)
+        .map((w) => chrome.windows.remove(w.id).catch(() => {}))
+    );
+    await chrome.windows.remove(current.id);
+  } catch {
     window.close();
-  });
+  }
 }
 
 // --- Button handlers ---
