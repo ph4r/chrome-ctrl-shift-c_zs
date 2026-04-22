@@ -5,12 +5,15 @@ const RESTRICTED_SCHEMES = [
   'devtools:', 'edge:', 'about:', 'data:', 'view-source:'
 ];
 const OFFSCREEN_PATH = 'offscreen.html';
+const UNINSTALL_URL = 'https://forms.gle/etAeGnCtw5zEgQNs9';
 const DEFAULT_SHORTCUT = {
   ctrlKey: true, shiftKey: true, altKey: false, metaKey: false, key: 'C'
 };
 
 // --- Install: set defaults + open onboarding ---
 chrome.runtime.onInstalled.addListener((details) => {
+  chrome.runtime.setUninstallURL(UNINSTALL_URL);
+
   chrome.storage.local.get(['enabled', 'shortcut', 'onboarded'], (result) => {
     const defaults = {};
     if (result.enabled === undefined) defaults.enabled = true;
