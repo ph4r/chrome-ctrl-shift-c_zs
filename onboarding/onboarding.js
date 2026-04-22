@@ -8,13 +8,20 @@ const btnGetStarted = document.getElementById('btn-get-started');
 const btnConfirm = document.getElementById('btn-confirm-shortcut');
 const btnUseDefault = document.getElementById('btn-use-default');
 const btnStartUsing = document.getElementById('btn-start-using');
+const btnTryHere = document.getElementById('btn-try-here');
 const recorderDisplay = document.getElementById('recorder-display');
 const recorderHint = document.getElementById('recorder-hint');
 const finalLabel = document.getElementById('final-shortcut-label');
+const finalKeycaps = document.getElementById('final-keycaps');
+const fallbackNote = document.getElementById('fallback-note');
+const tryHint = document.getElementById('try-hint');
+const trySuccess = document.getElementById('try-success');
 const dots = document.querySelectorAll('.onboarding__dot');
 
 let capturedShortcut = null;
 let recordHandler = null;
+let savedShortcut = DEFAULT_SHORTCUT;
+let tryHandler = null;
 
 // Guard: if already onboarded, close tab
 chrome.storage.local.get(['onboarded'], (result) => {
@@ -42,7 +49,12 @@ function goToStep(stepNumber) {
   });
 
   if (stepNumber === 2) startListening();
-  if (stepNumber === 3) stopListening();
+  if (stepNumber === 3) {
+    stopListening();
+    startTryListening();
+  } else {
+    stopTryListening();
+  }
 }
 
 // --- Shortcut recording ---
@@ -82,10 +94,114 @@ function stopListening() {
 
 // --- Save and complete ---
 
+function isDefaultShortcut(s) {
+  return (
+    s.ctrlKey === DEFAULT_SHORTCUT.ctrlKey &&
+    s.shiftKey === DEFAULT_SHORTCUT.shiftKey &&
+    s.altKey === DEFAULT_SHORTCUT.altKey &&
+    s.metaKey === DEFAULT_SHORTCUT.metaKey &&
+    s.key.toUpperCase() === DEFAULT_SHORTCUT.key.toUpperCase()
+  );
+}
+
+function renderKeycaps(shortcut) {
+  const keys = [];
+  if (shortcut.ctrlKey) keys.push('Ctrl');
+  if (shortcut.shiftKey) keys.push('Shift');
+  if (shortcut.altKey) keys.push('Alt');
+  if (shortcut.metaKey) keys.push('Cmd');
+  keys.push(formatKey(shortcut.key));
+
+  finalKeycaps.textContent = '';
+  keys.forEach((label, i) => {
+    if (i > 0) {
+      const plus = document.createElement('span');
+      plus.className = 'onboarding__kbd-plus';
+      plus.textContent = '+';
+      finalKeycaps.appendChild(plus);
+    }
+    const kbd = document.createElement('kbd');
+    kbd.className = 'onboarding__kbd';
+    kbd.textContent = label;
+    finalKeycaps.appendChild(kbd);
+  });
+}
+
 function saveShortcutAndProceed(shortcut) {
   chrome.storage.local.set({ shortcut });
+  savedShortcut = shortcut;
   finalLabel.textContent = formatShortcut(shortcut);
+  renderKeycaps(shortcut);
+  fallbackNote.hidden = isDefaultShortcut(shortcut);
   goToStep(3);
+}
+
+function matchesShortcut(e, s) {
+  return (
+    e.ctrlKey === s.ctrlKey &&
+    e.shiftKey === s.shiftKey &&
+    e.altKey === s.altKey &&
+    e.metaKey === s.metaKey &&
+    e.key.toUpperCase() === s.key.toUpperCase()
+  );
+}
+
+function startTryListening() {
+  stopTryListening();
+  tryHandler = (e) => {
+    const match = matchesShortcut(e, savedShortcut) ||
+      (!isDefaultShortcut(savedShortcut) && matchesShortcut(e, DEFAULT_SHORTCUT));
+    if (!match) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    navigator.clipboard.writeText(window.location.href).catch(() => {});
+    showPreviewToast();
+    revealTrySuccess();
+  };
+  document.addEventListener('keydown', tryHandler, true);
+}
+
+function stopTryListening() {
+  if (tryHandler) {
+    document.removeEventListener('keydown', tryHandler, true);
+    tryHandler = null;
+  }
+}
+
+function revealTrySuccess() {
+  if (tryHint) tryHint.hidden = true;
+  if (trySuccess) trySuccess.hidden = false;
+}
+
+// Fallback path: background sends this when default Ctrl+Shift+C is pressed
+// on the onboarding page (chrome.commands intercepts before our keydown fires).
+chrome.runtime.onMessage.addListener((message) => {
+  if (message?.type === 'onboarding-try') {
+    navigator.clipboard.writeText(window.location.href).catch(() => {});
+    showPreviewToast();
+    revealTrySuccess();
+  }
+});
+
+function showPreviewToast() {
+  const existing = document.querySelector('.onboarding__preview-toast');
+  if (existing) existing.remove();
+
+  const toast = document.createElement('div');
+  toast.className = 'onboarding__preview-toast';
+  toast.textContent = 'URL copied!';
+  document.body.appendChild(toast);
+
+  requestAnimationFrame(() => {
+    toast.classList.add('onboarding__preview-toast--visible');
+  });
+
+  setTimeout(() => {
+    toast.classList.add('onboarding__preview-toast--hiding');
+    toast.addEventListener('transitionend', () => toast.remove(), { once: true });
+  }, 1500);
 }
 
 function completeOnboarding() {
@@ -107,3 +223,8 @@ btnUseDefault.addEventListener('click', () => {
 });
 
 btnStartUsing.addEventListener('click', completeOnboarding);
+
+btnTryHere.addEventListener('click', () => {
+  navigator.clipboard.writeText(window.location.href).catch(() => {});
+  showPreviewToast();
+});

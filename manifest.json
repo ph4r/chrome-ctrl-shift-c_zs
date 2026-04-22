@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Copy URL — One-Click URL Copier & Link Shortcut (Ctrl+Shift+C)",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "One-click URL copier — copy any URL to clipboard with a keyboard shortcut. The fastest way to copy links in Chrome. Free & simple.",
   "icons": {
     "16": "icons/icon16.png",

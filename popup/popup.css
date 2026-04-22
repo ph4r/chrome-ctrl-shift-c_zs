@@ -253,3 +253,11 @@ body {
   background: #10B981;
   pointer-events: none;
 }
+
+.popup__tip {
+  margin-top: 10px;
+  font-size: 11px;
+  color: #9CA3AF;
+  line-height: 1.4;
+  text-align: center;
+}

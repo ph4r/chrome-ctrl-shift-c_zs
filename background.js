@@ -36,8 +36,17 @@ chrome.runtime.onInstalled.addListener((details) => {
 });
 
 // --- Commands API handler (default shortcut) ---
-chrome.commands.onCommand.addListener((command) => {
-  if (command === 'copy-url') copyTabUrl();
+chrome.commands.onCommand.addListener(async (command) => {
+  if (command !== 'copy-url') return;
+
+  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  const onboardingUrl = chrome.runtime.getURL('onboarding/onboarding.html');
+  if (tab?.url?.startsWith(onboardingUrl)) {
+    chrome.tabs.sendMessage(tab.id, { type: 'onboarding-try' }).catch(() => {});
+    return;
+  }
+
+  copyTabUrl();
 });
 
 // --- Message handler (from content script custom shortcut) ---
