@@ -86,20 +86,26 @@ document.addEventListener('keydown', (e) => {
   if (!enabled || !onboarded) return;
   if (!shortcut) return;
 
-  const match =
+  const kmatch =
     e.ctrlKey === shortcut.ctrlKey &&
     e.shiftKey === shortcut.shiftKey &&
     e.altKey === shortcut.altKey &&
     e.metaKey === shortcut.metaKey &&
     e.key.toUpperCase() === shortcut.key.toUpperCase();
 
-  if (!match) return;
+  if (!kmatch) return;
 
   e.preventDefault();
   e.stopPropagation();
 
+  const url = window.location.href;
+  const umatch = url.match(/origurl=(.*)/);
+  const extractedUrl = !umatch ? url : umatch[1];
+  // Clean up percent-encoding or hex escape codes
+  const cleanedUrl = decodeURIComponent(extractedUrl);
+  
   // Copy URL and show toast directly — no background roundtrip needed
-  navigator.clipboard.writeText(window.location.href).then(() => {
+  navigator.clipboard.writeText(cleanedUrl).then(() => {
     showToast();
   }).catch(() => {
     // Fallback: ask background to handle it

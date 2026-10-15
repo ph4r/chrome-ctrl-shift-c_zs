@@ -70,12 +70,16 @@ async function copyTabUrl() {
   if (!tab?.url) return;
 
   const url = tab.url;
+  const umatch = url.match(/origurl=(.*)/);
+  const extractedUrl = !umatch ? url : umatch[1];
+  // Clean up percent-encoding or hex escape codes
+  const cleanedUrl = decodeURIComponent(extractedUrl);
 
-  if (isRestricted(url)) {
-    await copyViaOffscreen(url);
+  if (isRestricted(cleanedUrl)) {
+    await copyViaOffscreen(cleanedUrl);
     showBadgeFeedback();
   } else {
-    await copyViaInjection(tab.id, url);
+    await copyViaInjection(tab.id, cleanedUrl);
   }
 }
 
